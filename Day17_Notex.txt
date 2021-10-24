@@ -1,0 +1,27 @@
+
+
+------------------------------------------
+In Feture File:
+Write your test cases in Gherken language
+
+In stepdefinitions package:
+create GoogleSearchStepDefinitions
+
+In runners package:(DO THIS ONLY ONCE)
+Create Runner class(Runner is created only once)
+@RunWith(Cucumber.class)
+@CucumberOptions(
+features= “features folder path”
+glue=“stepdefinitions folder path”
+tags= “@tagname” )
+Run the Runner class
+Generate  step definitions
+Write your java code
+
+---------------------------------
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features ="./src/test/resources/features", //"PATH OF THE FEATURES FOLDER",
+        glue ="stepdefinitions",                   //"PATH OF THE STEP DEFINITIONS FOLDER"
+        tags="@google_search",
+        dryRun = false
