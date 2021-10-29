@@ -6,11 +6,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features ="./src/test/resources/features", //"PATH OF THE FEATURES FOLDER",
-        glue ="stepdefinitions",                   //"PATH OF THE STEP DEFINITIONS FOLDER"
-        tags="@google_search",
-        dryRun = true
-
+        features = "./src/test/resources/features",
+        glue = "stepdefinitions",
+        tags = "@smoke and @regression",
+        dryRun = false
 )
 public class Runner {
 }

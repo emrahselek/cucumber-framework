@@ -5,11 +5,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import utilities.Driver;
 
-public class GooglePage {
-    public GooglePage(){
+public class DefaultPage {
+    public DefaultPage(){
         PageFactory.initElements(Driver.getDriver(),this);
     }
-
-    @FindBy(name = "q")
-    public WebElement googleSearchBox;
+    @FindBy (xpath = "//span[contains(@class, 'username')]")
+    public WebElement userId;
 }
