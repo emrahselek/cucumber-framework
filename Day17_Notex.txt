@@ -1,5 +1,36 @@
 
+What is cucumber framework ?
+-Cucumber is a BDD framework
+**************Why do you use cucumber ?
+-Reusable feature files
+-Understandable feature files even for in technical people
+-Less Java code overall because of the reusable step-definition
+-Visual cucumber reports
 
+1. Feature Files  are used to describe the behavior of the application
+2. It is written Gherkin Language
+        -Feature
+        -Scenario
+        -Scenario Outline
+        -Example
+        -Background
+        -Given, When, And, Then, But, *
+        -@Tag
+-----------------------------------------------
+*******Step Definitions
+-Under stepdefinitions folder , create a class :
+
+package stepdefinitions;
+
+public class Day17_GoogleSearchStepDefinitions {
+    //This step definition class will have JAVA CODE
+}
+
+-----------------------------------------------
+Runner
+-Runner class is used to run the feature files.
+-Under runners > Create a JAVA class :
+-----------------------------------------------
 ------------------------------------------
 In Feture File:
 Write your test cases in Gherken language
