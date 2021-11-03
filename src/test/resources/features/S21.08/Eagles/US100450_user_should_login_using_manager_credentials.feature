@@ -1,5 +1,6 @@
-@manager_login_test
+@login_test
 Feature: Login_Functionality_With_Right_Credentials
+  @manager_login_test
   Scenario Outline: login_with_manager_credentials
     Given user is on the application page
     And user enters manager id "<manager_id>"
@@ -37,4 +38,6 @@ Feature: Login_Functionality_With_Right_Credentials
 
     Examples: admin_data
       |admin_id    |admin_password  |default_page_ID|
-      |admin       |Techproed123!   |admin          |
+      |admin       |Techproed123    |admin          |
+#    This is failed to test screenshot. Correct password:Techproed123!
+#    When this test case fails, we should see the screenshot is attached to the HTLM report

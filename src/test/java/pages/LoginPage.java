@@ -5,22 +5,25 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import utilities.Driver;
 
-
 public class LoginPage {
 
-    public LoginPage() {
-
-        PageFactory.initElements(Driver.getDriver(), this);
+    public LoginPage(){
+        PageFactory.initElements(Driver.getDriver(),this);
     }
 
-    @FindBy(id = "UserName")
+    @FindBy(id="UserName")
     public WebElement username;
-    @FindBy(id = "Password")
+
+    @FindBy(id="Password")
     public WebElement password;
-    @FindBy(id = "btnSubmit")
+
+    @FindBy(id="btnSubmit")
     public WebElement loginButton;
-    @FindBy(id = "details-button")
+
+    @FindBy(id="details-button")
     public WebElement advancedLink;
-    @FindBy(id = "proceed-link")
+
+    @FindBy(id="proceed-link")
     public WebElement proceedLink;
+
 }
