@@ -3,7 +3,6 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 public class ConfigReader {
-
     private static Properties properties;
     static {
         String path = "configuration.properties";
