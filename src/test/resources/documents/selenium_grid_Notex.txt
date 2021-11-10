@@ -1,0 +1,225 @@
+----------------------------------------------
+*****SELENIUM GRID STEPS FROM THE SCRATCH*****
+----------------------------------------------
+1. Go to Documents and Create a folder : SeleniumServer
+2. Go to https://www.selenium.dev/downloads/ and download Selenium Server (Grid) Latest stable version 3.141.59
+3. Move the Selenium Server jar file in the SeleniumServer folder
+4. Change Directory to the SeleniumServer folder
+    *****Open Our Terminal(MAC) or CMD(WINDOWS)
+    *****Change Directory to the SeleniumServer Folder:
+        -cd Documents
+        -cd SeleniumServer
+        OR
+        -cd Documents/SeleniumServer
+----NOTES-------------
+pwd : where you are -> /Users/techproed
+ls  : list of folders linux
+dir : list of folders windows
+cd  : change directory
+IF YOU GET ERROR WHEN YOU CHANGE DIRECTORY, PASS THE FULL PATH OF THE SELENIUM SERVER FOLDER
+-----------------------
+5. Register HUB
+Run this on the terminal:
+java -jar selenium-server-standalone-3.141.59.jar -role hub
+-Terminal will give the HUB URL. We can go to that URL to see HUB IS RUNNING:
+MY HUB URL: http://192.168.0.14:4444
+YOURS CAN BE DIFFERENT.
+*****TO STOP THE HUB SERVER, YOU CAN CLOSE THE TERMINAL
+OR
+Control + c
+*****
+Run this on the terminal again to start teh HUB:
+java -jar selenium-server-standalone-3.141.59.jar -role hub
+6. Register NODE FOR CHROME
+*****Open A NEW Terminal(MAC) or CMD(WINDOWS). DO NOT CLOSE THE FIRST HUB
+MAC     : shell > New window > basic
+WINDOWS : Just search and open a new one
+*****Change Directory to the SeleniumServer Folder:
+        -cd Documents
+        -cd SeleniumServer
+        OR
+        -cd Documents/SeleniumServer
+COMMEND TO CREATE NODE FOR CHROME:
+java -Dwebdriver.chrome.driver="YOUR CHROME DRIVER PATH" -jar selenium-server-standalone-3.141.59.jar -role node -hub YOURPORTURL/grid/register -port PORTNUMBER
+MY CHROME PATH : /Users/techproed/Documents/selenium libraries/drivers/chromedriver
+NOTE : FOR WINDOWS USE .exe EXTENSION
+MY PORT URL: http://192.168.0.14:4444
+FINAL COMMAND TO REGISTER NODE FOR CHROME DRIVER:
+java -Dwebdriver.chrome.driver="/Users/techproed/Documents/selenium libraries/drivers/chromedriver" -jar selenium-server-standalone-3.141.59.jar -role node -hub http://192.168.0.14:4444/grid/register -port 4445
+NOTE: WE CAN CREATE ANOTHER NODE IN A NEW TERMINAL:
+java -Dwebdriver.chrome.driver="/Users/techproed/Documents/selenium libraries/drivers/chromedriver" -jar selenium-server-standalone-3.141.59.jar -role node -hub http://192.168.0.14:4444/grid/register -port 4446
+NOTE: WHEN YOU CRATE NODE, AND CLICK ON cconsole LINK, THEN YOU SHOULD SEE YOUR FIRST HUB.
+7. Register NODE FOR FIREFOX
+*****Open A NEW Terminal(MAC) or CMD(WINDOWS). DO NOT CLOSE THE FIRST HUB
+MAC     : shell > New window > basic
+WINDOWS : Just search and open a new one
+*****Change Directory to the SeleniumServer Folder:
+        -cd Documents
+        -cd SeleniumServer
+        OR
+        -cd Documents/SeleniumServer
+FINAL COMMAND TO REGISTER NODE FOR FIREFOX DRIVER:
+--CHAGES FROM THE CHROME---------------
+chrome        -> gecko
+chromedriver  -> geckodriver
+4445          -> 4446
+---------------------------------------
+java -Dwebdriver.gecko.driver="/Users/techproed/Documents/selenium libraries/drivers/geckodriver" -jar selenium-server-standalone-3.141.59.jar -role node -hub http://192.168.0.14:4444/grid/register -port 4446
+
+java -Dwebdriver.gecko.driver="C:\Users\BelomeX\Documents\selenium dependencies\drivers\chromedriver.exe" -jar selenium-server-standalone-3.141.59.jar -role node -hub http://10.0.0.34:4444/grid/register -port 4445
+
+
+---------------------------------------
+NOTE : FOR WINDOWS USE .exe EXTENSION
+---------------------------------------
+***** SO FAR WE CREATED ONE NODE AND TWO HUBS ******
+***** WE MUST RUN HUB AND NOTED TO RUN ON SELENIUM GRID*****
+-----------SET UP IS COMPETED-------------------------
+*****CREATE FEATURE FILE*****
+@selenium_grid
+Feature: verify_application_title
+  Scenario: verify_title_on_chrome
+    Given user is on the application_login page with chrome
+    Then verify the tile includes Resortsline
+*****CREATE STEP DEFINITIONS*****
+package stepdefinitions;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import utilities.ConfigReader;
+import utilities.ReusableMethods;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+public class Selenium_Grid_Step_Defs {
+   WebDriver driver;
+   @Given("user is on the application_login page with chrome")
+   public void user_is_on_the_application_login_page_with_chrome() throws MalformedURLException {
+//       1. Create Desired Capabilities object
+       DesiredCapabilities cap=new DesiredCapabilities();
+//       2. Use cap ro assign browser name and operation system
+       cap.setBrowserName("chrome");
+//        cap.setPlatform(Platform.MAC); //For mac
+//        cap.setPlatform(Platform.WINDOWS); //for windows
+       cap.setPlatform(Platform.ANY); // for either mac or windows
+//       3. Merge the Chrome with Desired Capabilities
+       ChromeOptions options=new ChromeOptions();
+       options.merge(cap);
+//       4. Create driver object using RemoteWebDriver
+//         Hub URL = porturl / wd / hub
+       String hubURL="http://192.168.0.14:4444/wd/hub";
+       driver= new RemoteWebDriver(new URL(hubURL),options);
+       driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+       driver.manage().window().maximize();
+//        5. CONFIGURATIONS ARE DONE. WE CAN WRITE OUR JAVA CODES
+       driver.get(ConfigReader.getProperty("app_qa_environment"));
+       try{
+           ReusableMethods.waitFor(1);
+           driver.findElement(By.id("details-button")).click();
+           ReusableMethods.waitFor(1);
+           driver.findElement(By.id("proceed-link")).click();
+           ReusableMethods.waitFor(1);
+       }catch (Exception e){
+           System.out.println("Advanced Link and Proceed Link is not displayed");
+       }
+   }
+   @Then("verify the tile includes Resortsline")
+   public void verify_the_tile_includes_resortsline() {
+       String title=driver.getTitle();
+       Assert.assertTrue(title.contains("Resortsline"));
+   }
+}
+*****RUN YOUR FEATURE FILE*****
+DONE
+==================WHAT TO REMEMBER?????====================
+*What is selenium grid?
+-It is used to run tests remotely or in parallel.
+*How do you use selenium grid?
+-We first need to setup the grid
+    1. Donwload selenium server jar file
+    2. Create HUB and NODES
+    3. Write your test cases
+    4. Check teh results on the selenium grid url.
+-NOTE: We can create 1 Hub multiple Nodes
+-NOTE: We can run tests on CHROME or FIREFOX with selenium grid
+*How do you configure test case on selenium grid?
+- We use Desired capabilities to configure the set up
+- We add browser type, OS, or versions with desired capabilities
+- We use Remote Driver to create the WebDriver instance
+-----------------------------------------------------------
+*****COMPLETE FEATURE FILE FOR FIREFOX*****
+#    How can i run on firefox
+    Scenario: verify_title_on_firefox
+      Given user is on the application_login page with firefox
+      Then verify the tile includes Resortsline
+*****COMPLETE STEP DEFINITIONS*****
+ @Given("user is on the application_login page with firefox")
+    public void user_is_on_the_application_login_page_with_firefox() throws MalformedURLException {
+        //       1. Create Desired Capabilities object
+        DesiredCapabilities cap=new DesiredCapabilities();
+        //       2. Use cap ro assign browser name and operation system
+        cap.setBrowserName("firefox");//DIFFERENT THAN CHROME
+//        cap.setPlatform(Platform.MAC); //For mac
+//        cap.setPlatform(Platform.WINDOWS); //for windows
+        cap.setPlatform(Platform.ANY); // for either mac or windows
+        //       3. Merge the Chrome with Desired Capabilities
+        FirefoxOptions options=new FirefoxOptions();//DIFFERENT THAN CHROME
+        options.merge(cap);
+        //       4. Create driver object using RemoteWebDriver
+//         Hub URL = porturl / wd / hub
+        String hubURL="http://192.168.0.14:4446/wd/hub";
+        driver= new RemoteWebDriver(new URL(hubURL),options);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().window().maximize();
+        //        5. CONFIGURATIONS ARE DONE. WE CAN WRITE OUR JAVA CODES
+        driver.get(ConfigReader.getProperty("google_url"));
+    }
+================RERUN ONLY FAILED SCENARIO==============
+You have 500 test cases you are running.It takes 6 hours.
+100 of them failed 400 passed
+Then what do you do??????
+Answer: We would run only failed scenarios.
+In cucumber we can run only failed scenarios by using plug ins.
+STEP 1: Add rerun plugin in the Runner class
+"rerun: target/failedRerun.txt"
+This plugin generated a new .txt file under target folder that will have ONLY FAILEL SCENARIOS
+Scenario on line 21 fails so we see the following reports on the txt file:
+file:src/test/resources/features/day18_first_feature_file.feature:21
+STEP 2: Create a new Runner class to run ONLY FAILED SCENARIOS
+package runners;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        plugin = {
+                "html:target/default-cucumber-reports",
+                "json:target/json-report/cucumber.json",
+                "junit:target/xml-report/cucumber.xml",
+                "rerun:target/failedRerun.txt"
+        },
+//        Path of the failedRerun.txt file
+        features = "@target/failedRerun.txt",
+        glue = "stepdefinitions",
+        tags = "@google_search",
+        dryRun = false
+)
+public class FailedScenarioRunner {
+}
+Questions:
+1. How do you run only failed scenarios?
+-rerun plugin
+-I have rerun plugin in my runner class.
+-It will capture ONLY THE FAILED SCENARIOS.
+-I capture the failed scenarios in a txt file in the target folder
+-I have a runner just to run these failed scenarios.
+2. If all your tests passed, do you see the any scenario on the .txt file?
+No. It ll be empty
+3. What happens when you try to rerun the failedRunner if there is no failed scenarios last time?
+It will not rin any scenarios.
